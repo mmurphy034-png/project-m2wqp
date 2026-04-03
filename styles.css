@@ -63,16 +63,16 @@ a:hover {
 
 .shell {
   position: relative;
-  width: min(1320px, calc(100vw - 32px));
+  width: min(1280px, calc(100vw - 28px));
   margin: 0 auto;
-  padding: 28px 0 48px;
+  padding: 18px 0 32px;
 }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.7fr 360px;
-  gap: 20px;
-  margin-bottom: 20px;
+  grid-template-columns: 1.7fr 300px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .hero-copy,
@@ -88,14 +88,14 @@ a:hover {
 .hero-copy,
 .panel,
 .hero-card {
-  padding: 24px;
+  padding: 16px;
 }
 
 .eyebrow,
 .symbol,
 .band-label {
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -110,9 +110,9 @@ a:hover {
 
 .hero h1 {
   font-family: "Fraunces", serif;
-  font-size: clamp(2.8rem, 5vw, 5.2rem);
-  line-height: 0.95;
-  max-width: 12ch;
+  font-size: clamp(1.85rem, 3vw, 2.8rem);
+  line-height: 1;
+  max-width: 14ch;
 }
 
 .headline-copy,
@@ -122,31 +122,34 @@ a:hover {
 .band-helper,
 .formula-list {
   color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
 }
 
 .hero-card button {
   width: 100%;
-  min-height: 48px;
+  min-height: 40px;
   border: none;
   border-radius: 999px;
   background: linear-gradient(135deg, #f0f0f0 0%, #7f7f7f 100%);
   color: #0d0d0d;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.88rem;
   cursor: pointer;
 }
 
 .market-pulse {
   display: grid;
-  gap: 8px;
-  margin: 18px 0 10px;
-  padding: 16px;
-  border-radius: 22px;
+  gap: 6px;
+  margin: 12px 0 8px;
+  padding: 12px;
+  border-radius: 16px;
   background: var(--panel-strong);
   border: 1px solid var(--line);
 }
 
 .market-pulse strong {
-  font-size: 2.2rem;
+  font-size: 1.5rem;
 }
 
 .positive {
@@ -164,7 +167,7 @@ a:hover {
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 14px;
 }
 
 .panel-wide {
@@ -172,14 +175,14 @@ a:hover {
 }
 
 .section-header {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .snapshot-grid,
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .snapshot-card,
@@ -188,7 +191,7 @@ a:hover {
 .matrix-row,
 .matrix-head,
 .empty-state {
-  border-radius: 22px;
+  border-radius: 16px;
   border: 1px solid var(--line);
   background: var(--panel-strong);
 }
@@ -196,18 +199,18 @@ a:hover {
 .snapshot-card,
 .insight-card,
 .team-card {
-  padding: 18px;
+  padding: 12px;
 }
 
 .snapshot-card h3,
 .insight-card strong {
-  font-size: 1.8rem;
-  margin: 6px 0;
+  font-size: 1.1rem;
+  margin: 4px 0;
 }
 
 .card-list {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .team-card.positive {
@@ -221,7 +224,7 @@ a:hover {
 .team-card-top {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .pill,
@@ -229,11 +232,11 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
-  font-size: 0.74rem;
+  font-size: 0.66rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 .pill.positive,
@@ -256,26 +259,26 @@ a:hover {
 
 .probability-stack {
   display: grid;
-  gap: 10px;
-  margin: 14px 0;
+  gap: 8px;
+  margin: 10px 0;
 }
 
 .probability-block {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .probability-label {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 0.8rem;
+  gap: 8px;
+  font-size: 0.72rem;
   color: var(--muted);
 }
 
 .probability-track {
   position: relative;
-  height: 9px;
+  height: 7px;
   border-radius: 999px;
   background: #0b0b0b;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -305,36 +308,37 @@ a:hover {
 }
 
 .last-price {
-  margin: 0 0 10px;
-  font-size: 1rem;
+  margin: 0 0 8px;
+  font-size: 0.84rem;
 }
 
 .formula-list {
   margin: 0;
   padding-left: 18px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  font-size: 0.84rem;
 }
 
 .matrix {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .matrix-head,
 .matrix-row {
   display: grid;
   grid-template-columns: 1.7fr 0.95fr 0.95fr 0.95fr 0.95fr 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 16px 18px;
+  padding: 12px 14px;
 }
 
 .matrix-head {
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  font-size: 0.66rem;
 }
 
 .team-cell strong {
@@ -342,11 +346,11 @@ a:hover {
 }
 
 .matrix-row .probability-block {
-  min-width: 120px;
+  min-width: 96px;
 }
 
 .empty-state {
-  padding: 18px;
+  padding: 12px;
   color: var(--muted);
 }
 
