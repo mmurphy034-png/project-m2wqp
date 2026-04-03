@@ -98,7 +98,7 @@ function toNumber(value) {
     return null;
   }
 
-  const cleaned = String(value).replace(/,/g, "");
+  const cleaned = String(value).replace(/,/g, "").replace(/%/g, "");
   const numeric = Number(cleaned);
   return Number.isFinite(numeric) ? numeric : null;
 }
@@ -115,21 +115,44 @@ function getField(source, keys) {
 
 function normalizeQuote(rawQuote) {
   const quick = rawQuote?.QuickQuote || rawQuote?.quickQuote || rawQuote || {};
-  const fundamentals = quick.FundamentalData || rawQuote?.FundamentalData || {};
+  const fundamentals =
+    quick.FundamentalData ||
+    rawQuote?.FundamentalData ||
+    quick.fundamentalData ||
+    rawQuote?.fundamentalData ||
+    {};
 
-  const symbol = getField(quick, ["symbol", "altSymbol"]);
+  const symbol = getField(quick, ["symbol", "altSymbol", "ticker"]);
   const last = toNumber(
-    getField(quick, ["last", "last_trade", "lastPrice", "lastExtendedHoursTradePrice"])
+    getField(quick, [
+      "last",
+      "last_trade",
+      "lastPrice",
+      "lastExtendedHoursTradePrice",
+      "Last",
+      "LastPrice"
+    ])
   );
-  const change = toNumber(getField(quick, ["change", "change_val", "priceChange"]));
+  const change = toNumber(getField(quick, ["change", "change_val", "priceChange", "Change"]));
   const percentChange = toNumber(
-    getField(quick, ["change_pct", "changePercent", "percentChange", "change_pct_num"])
+    getField(quick, [
+      "change_pct",
+      "changePercent",
+      "percentChange",
+      "change_pct_num",
+      "Change_Pct",
+      "percent_change"
+    ])
   );
   const open = toNumber(getField(fundamentals, ["open", "Open"]));
   const high = toNumber(getField(fundamentals, ["high", "High", "day_high"]));
   const low = toNumber(getField(fundamentals, ["low", "Low", "day_low"]));
-  const prevClose = toNumber(getField(fundamentals, ["prev_close", "PrevClose", "previous_day_closing"]));
-  const volume = toNumber(getField(quick, ["volume", "Volume"])) || toNumber(getField(fundamentals, ["volume", "Volume"]));
+  const prevClose = toNumber(
+    getField(fundamentals, ["prev_close", "PrevClose", "previous_day_closing"])
+  );
+  const volume =
+    toNumber(getField(quick, ["volume", "Volume"])) ||
+    toNumber(getField(fundamentals, ["volume", "Volume"]));
   const ytd = toNumber(getField(fundamentals, ["ytd_pct_chg", "YTD % Change", "ytdChange"]));
 
   return {
@@ -145,9 +168,11 @@ function normalizeQuote(rawQuote) {
     volume,
     ytd,
     status: getField(quick, ["curmktstatus", "marketStatus"]) || "UNKNOWN",
-    sourceUrl: `https://www.cnbc.com/quotes/${encodeURIComponent(symbol)}`
+    sourceUrl: symbol ? `https://www.cnbc.com/quotes/${encodeURIComponent(symbol)}` : null
   };
-}function toQuoteArray(payload) {
+}
+
+function toQuoteArray(payload) {
   const candidates = [
     payload?.ExtendedQuoteResult?.ExtendedQuote,
     payload?.QuickQuoteResult?.QuickQuote,
@@ -170,6 +195,49 @@ function normalizeQuote(rawQuote) {
   return [];
 }
 
+function looksLikeQuoteObject(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const keys = Object.keys(value);
+  return (
+    keys.includes("symbol") ||
+    keys.includes("altSymbol") ||
+    keys.includes("last") ||
+    keys.includes("lastPrice") ||
+    keys.includes("change_pct") ||
+    keys.includes("QuickQuote")
+  );
+}
+
+function collectQuoteCandidates(value, found = [], seen = new Set()) {
+  if (!value || typeof value !== "object") {
+    return found;
+  }
+
+  if (seen.has(value)) {
+    return found;
+  }
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectQuoteCandidates(item, found, seen));
+    return found;
+  }
+
+  if (looksLikeQuoteObject(value)) {
+    found.push(value);
+  }
+
+  Object.values(value).forEach((item) => {
+    if (item && typeof item === "object") {
+      collectQuoteCandidates(item, found, seen);
+    }
+  });
+
+  return found;
+}
 
 function attachMetadata(assetsBySymbol) {
   return ASSETS.map((asset) => ({
@@ -286,9 +354,10 @@ module.exports = async function handler(req, res) {
 
     const payload = await response.json();
     const rawQuotes = toQuoteArray(payload);
+    const quoteCandidates = rawQuotes.length ? rawQuotes : collectQuoteCandidates(payload);
 
     const assetsBySymbol = {};
-    for (const rawQuote of rawQuotes) {
+    for (const rawQuote of quoteCandidates) {
       const quote = normalizeQuote(rawQuote);
       if (quote.symbol) {
         assetsBySymbol[quote.symbol] = quote;
@@ -324,3 +393,4 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+
