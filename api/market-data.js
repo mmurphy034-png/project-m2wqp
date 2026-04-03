@@ -285,10 +285,7 @@ module.exports = async function handler(req, res) {
     }
 
     const payload = await response.json();
-    const rawQuotes =
-      payload?.ExtendedQuoteResult?.ExtendedQuote ||
-      payload?.QuickQuoteResult?.QuickQuote ||
-      [];
+    const rawQuotes = toQuoteArray(payload);
 
     const assetsBySymbol = {};
     for (const rawQuote of rawQuotes) {
