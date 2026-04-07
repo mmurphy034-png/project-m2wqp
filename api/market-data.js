@@ -39,6 +39,39 @@ const TEAM_NAME_TO_CODE = {
   "Washington Nationals": "WSH"
 };
 
+const TEAM_ID_TO_CODE = {
+  109: "AZ",
+  144: "ATL",
+  110: "BAL",
+  111: "BOS",
+  112: "CHC",
+  145: "CWS",
+  113: "CIN",
+  114: "CLE",
+  115: "COL",
+  116: "DET",
+  117: "HOU",
+  118: "KC",
+  108: "LAA",
+  119: "LAD",
+  146: "MIA",
+  158: "MIL",
+  142: "MIN",
+  121: "NYM",
+  147: "NYY",
+  133: "ATH",
+  143: "PHI",
+  134: "PIT",
+  135: "SD",
+  137: "SF",
+  136: "SEA",
+  138: "STL",
+  139: "TB",
+  140: "TEX",
+  141: "TOR",
+  120: "WSH"
+};
+
 let cache = {
   payload: null,
   expiresAt: 0
@@ -193,6 +226,20 @@ async function fetchStandings() {
 
 function normalizeTeamName(name) {
   return TEAM_NAME_TO_CODE[name] || null;
+}
+
+function normalizeTeamCode(team) {
+  if (!team) {
+    return null;
+  }
+
+  return (
+    TEAM_ID_TO_CODE[team.id] ||
+    TEAM_NAME_TO_CODE[team.name] ||
+    TEAM_NAME_TO_CODE[team.teamName] ||
+    TEAM_NAME_TO_CODE[team.locationName ? `${team.locationName} ${team.teamName || ""}`.trim() : ""] ||
+    null
+  );
 }
 
 async function fetchOddsByTeam() {
@@ -448,10 +495,12 @@ async function fetchTodayMatchups() {
   const pitchersById = Object.fromEntries(pitcherEntries);
 
   return games.map((game) => {
-    const awayName = game.teams?.away?.team?.name;
-    const homeName = game.teams?.home?.team?.name;
-    const awayCode = TEAM_NAME_TO_CODE[awayName];
-    const homeCode = TEAM_NAME_TO_CODE[homeName];
+    const awayTeam = game.teams?.away?.team;
+    const homeTeam = game.teams?.home?.team;
+    const awayName = awayTeam?.name;
+    const homeName = homeTeam?.name;
+    const awayCode = normalizeTeamCode(awayTeam);
+    const homeCode = normalizeTeamCode(homeTeam);
     const awayPitcherMeta = game.teams?.away?.probablePitcher || null;
     const homePitcherMeta = game.teams?.home?.probablePitcher || null;
     const awayPitcher = awayPitcherMeta ? pitchersById[awayPitcherMeta.id] : null;
