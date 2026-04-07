@@ -56,7 +56,7 @@ button {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.95fr 250px;
+  grid-template-columns: 1.95fr 220px;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -73,7 +73,7 @@ button {
 .hero-copy,
 .panel,
 .hero-card {
-  padding: 12px;
+  padding: 10px;
 }
 
 .eyebrow,
@@ -94,9 +94,9 @@ button {
 
 .hero h1 {
   font-family: "Fraunces", serif;
-  font-size: clamp(1.55rem, 2.1vw, 2.25rem);
+  font-size: clamp(1.35rem, 1.6vw, 1.9rem);
   line-height: 0.98;
-  max-width: 17ch;
+  max-width: none;
 }
 
 .headline-copy,
@@ -109,34 +109,36 @@ button {
   line-height: 1.32;
 }
 
-.hero-copy .headline-copy {
-  max-width: 72ch;
-}
-
 .hero-card button {
   width: 100%;
-  min-height: 34px;
+  min-height: 30px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #ffffff;
   color: #000000;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   cursor: pointer;
 }
 
 .market-pulse {
   display: grid;
-  gap: 4px;
-  margin: 8px 0 6px;
-  padding: 10px;
+  gap: 2px;
+  margin: 6px 0 6px;
+  padding: 8px;
   border-radius: 12px;
   background: var(--panel-strong);
   border: 1px solid var(--line);
 }
 
 .market-pulse strong {
-  font-size: 1.2rem;
+  font-size: 1rem;
+}
+
+.hero-card .status-text,
+.market-pulse span {
+  font-size: 0.68rem;
+  line-height: 1.25;
 }
 
 .positive {
@@ -375,25 +377,16 @@ button {
 }
 
 @media (min-width: 1100px) {
-  body {
-    overflow: hidden;
-  }
-
-  .shell {
-    height: 100vh;
-    overflow: hidden;
-  }
-
   .card-list,
   .matrix,
   .matchups-grid {
-    max-height: 33vh;
-    overflow: auto;
+    max-height: none;
+    overflow: visible;
     padding-right: 4px;
   }
 
   .panel-wide .matrix {
-    max-height: 36vh;
+    max-height: none;
   }
 }
 

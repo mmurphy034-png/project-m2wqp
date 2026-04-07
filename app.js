@@ -174,7 +174,7 @@ function setGroup(target, items, emptyText) {
 }
 
 function renderDashboard(payload) {
-  headline.textContent = `${payload.summary.headline} ${payload.summary.takeaway}`;
+  headline.textContent = "MLB";
 
   marketPulse.innerHTML = `
     <span>Average pricing gap</span>
@@ -226,7 +226,7 @@ function renderDashboard(payload) {
 }
 
 function renderError(message) {
-  headline.textContent = message;
+  headline.textContent = "MLB";
   marketPulse.textContent = "Unable to refresh";
   snapshotGrid.innerHTML = `<div class="empty-state">${message}</div>`;
   matchupsGrid.innerHTML = "";
