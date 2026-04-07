@@ -1,4 +1,5 @@
 const headline = document.getElementById("headline");
+const headlineLinks = document.getElementById("headlineLinks");
 const scoreboard = document.getElementById("scoreboard");
 const pitchingGrid = document.getElementById("pitchingGrid");
 
@@ -237,6 +238,23 @@ function renderScoreboard(items) {
   `;
 }
 
+function renderHeadlines(items) {
+  if (!items.length) {
+    headlineLinks.innerHTML = `<div class="empty-state">No headlines available right now.</div>`;
+    return;
+  }
+
+  headlineLinks.innerHTML = items
+    .map(
+      (item) => `
+        <a class="headline-link" href="${item.link}" target="_blank" rel="noreferrer">
+          <span>${item.title}</span>
+        </a>
+      `
+    )
+    .join("");
+}
+
 function renderDashboard(payload) {
   headline.textContent = `MLB ${String.fromCodePoint(0x26be)}`;
   renderScoreboard(payload.matchups || []);
@@ -253,13 +271,18 @@ function renderError(message) {
 
 async function loadDashboard() {
   try {
-    const response = await fetch("/api/market-data");
-    const payload = await response.json();
+    const [marketResponse, headlinesResponse] = await Promise.all([
+      fetch("/api/market-data"),
+      fetch("/api/headlines")
+    ]);
+    const payload = await marketResponse.json();
+    const headlinesPayload = await headlinesResponse.json();
 
-    if (!response.ok) {
+    if (!marketResponse.ok) {
       throw new Error(payload.error || "Unable to fetch MLB market data.");
     }
 
+    renderHeadlines(headlinesResponse.ok ? headlinesPayload.headlines || [] : []);
     renderDashboard(payload);
   } catch (error) {
     renderError(error.message);

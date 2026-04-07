@@ -144,6 +144,27 @@ button {
   line-height: 1.12;
 }
 
+.headline-links {
+  display: grid;
+  gap: 6px;
+}
+
+.headline-link {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-strong);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.headline-link:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
 .snapshot-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
