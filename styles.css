@@ -55,10 +55,8 @@ button {
 }
 
 .hero {
-  display: grid;
-  grid-template-columns: 1.95fr 220px;
-  gap: 10px;
-  margin-bottom: 10px;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .hero-copy,
@@ -94,9 +92,14 @@ button {
 
 .hero h1 {
   font-family: "Fraunces", serif;
-  font-size: clamp(1.35rem, 1.6vw, 1.9rem);
+  font-size: clamp(1.25rem, 1.5vw, 1.7rem);
   line-height: 0.98;
   max-width: none;
+}
+
+.hero-copy-minimal {
+  padding: 8px 10px;
+  min-height: auto;
 }
 
 .headline-copy,
@@ -107,38 +110,6 @@ button {
   color: var(--muted);
   font-size: 0.76rem;
   line-height: 1.32;
-}
-
-.hero-card button {
-  width: 100%;
-  min-height: 30px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #ffffff;
-  color: #000000;
-  font-weight: 700;
-  font-size: 0.74rem;
-  cursor: pointer;
-}
-
-.market-pulse {
-  display: grid;
-  gap: 2px;
-  margin: 6px 0 6px;
-  padding: 8px;
-  border-radius: 12px;
-  background: var(--panel-strong);
-  border: 1px solid var(--line);
-}
-
-.market-pulse strong {
-  font-size: 1rem;
-}
-
-.hero-card .status-text,
-.market-pulse span {
-  font-size: 0.68rem;
-  line-height: 1.25;
 }
 
 .positive {
@@ -236,9 +207,27 @@ button {
   color: var(--muted);
 }
 
+.team-heading,
+.game-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .matchup-team strong {
   color: var(--text);
   font-size: 0.84rem;
+}
+
+.team-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.team-logo.small {
+  width: 16px;
+  height: 16px;
 }
 
 .win-pct {

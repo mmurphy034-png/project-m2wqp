@@ -1,12 +1,17 @@
 const headline = document.getElementById("headline");
-const marketPulse = document.getElementById("marketPulse");
-const statusText = document.getElementById("statusText");
-const refreshButton = document.getElementById("refreshButton");
 const snapshotGrid = document.getElementById("snapshotGrid");
 const matchupsGrid = document.getElementById("matchupsGrid");
 const marketHigherGroup = document.getElementById("marketHigherGroup");
 const marketLowerGroup = document.getElementById("marketLowerGroup");
 const scoreboard = document.getElementById("scoreboard");
+
+function teamLogoUrl(code) {
+  if (!code) {
+    return "";
+  }
+
+  return `https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/${String(code).toLowerCase()}.png&h=48&w=48&scale=crop&location=origin`;
+}
 
 function formatPct(value) {
   if (value === null || value === undefined) {
@@ -113,14 +118,17 @@ function renderMatchupCard(game) {
     <article class="matchup-card">
       <div class="matchup-top">
         <div>
-          <p class="eyebrow">${game.matchup}</p>
-          <h3 class="${leanClass}">${game.lean}</h3>
+          <h3>${game.matchup}</h3>
+          <p class="eyebrow ${leanClass}">${game.lean}</p>
         </div>
         <div class="pill ${game.lean.includes("away") ? "positive" : game.lean.includes("home") ? "negative" : "neutral"}">${game.gameTime ? new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(game.gameTime)) : "TBD"}</div>
       </div>
       <div class="matchup-columns">
         <div class="matchup-team">
-          <strong>${game.away.code}</strong>
+          <div class="team-heading">
+            <img class="team-logo" src="${teamLogoUrl(game.away.code)}" alt="${game.away.code} logo" />
+            <strong>${game.away.code}</strong>
+          </div>
           <span class="win-pct">Win% ${formatPct(game.away.winPct)}</span>
           <p>${game.away.pitcher.name}</p>
           <span>ERA ${formatNumber(game.away.pitcher.era)} | WHIP ${formatNumber(game.away.pitcher.whip)}</span>
@@ -131,7 +139,10 @@ function renderMatchupCard(game) {
           <span>Bullpen edge: ${game.bullpenEdge}</span>
         </div>
         <div class="matchup-team">
-          <strong>${game.home.code}</strong>
+          <div class="team-heading">
+            <img class="team-logo" src="${teamLogoUrl(game.home.code)}" alt="${game.home.code} logo" />
+            <strong>${game.home.code}</strong>
+          </div>
           <span class="win-pct">Win% ${formatPct(game.home.winPct)}</span>
           <p>${game.home.pitcher.name}</p>
           <span>ERA ${formatNumber(game.home.pitcher.era)} | WHIP ${formatNumber(game.home.pitcher.whip)}</span>
@@ -157,7 +168,11 @@ function renderScoreboard(items) {
         (game) => `
           <article class="matrix-row">
             <div class="team-cell">
-              <strong>${game.matchup}</strong>
+              <strong class="game-title">
+                <img class="team-logo small" src="${teamLogoUrl(game.away.code)}" alt="${game.away.code} logo" />
+                <span>${game.matchup}</span>
+                <img class="team-logo small" src="${teamLogoUrl(game.home.code)}" alt="${game.home.code} logo" />
+              </strong>
               <p>${game.away.code} ${formatPct(game.away.winPct)} | ${game.home.code} ${formatPct(game.home.winPct)}</p>
             </div>
             <div>${probabilityBar(game.away.code, game.away.winPct, "actual")}</div>
@@ -179,13 +194,7 @@ function setGroup(target, items, emptyText) {
 }
 
 function renderDashboard(payload) {
-  headline.textContent = "MLB";
-
-  marketPulse.innerHTML = `
-    <span>Average pricing gap</span>
-    <strong>${formatGap(payload.summary.averages.gap)}</strong>
-    <p class="status-text">Record ${formatPct(payload.summary.averages.actualWinPct)} vs market ${formatPct(payload.summary.averages.marketImpliedWinPct)}</p>
-  `;
+  headline.textContent = "MLB ⚾";
 
   snapshotGrid.innerHTML = [
     renderSnapshotCard(
@@ -223,16 +232,10 @@ function renderDashboard(payload) {
     "No teams are materially below their record in current pricing."
   );
   renderScoreboard(payload.matchups || []);
-
-  statusText.textContent = `Last refreshed ${new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(payload.fetchedAt))}. Moneylines are near-term pricing, not full-season futures.`;
 }
 
 function renderError(message) {
-  headline.textContent = "MLB";
-  marketPulse.textContent = "Unable to refresh";
+  headline.textContent = "MLB ⚾";
   snapshotGrid.innerHTML = `<div class="empty-state">${message}</div>`;
   matchupsGrid.innerHTML = "";
   marketHigherGroup.innerHTML = "";
@@ -241,9 +244,6 @@ function renderError(message) {
 }
 
 async function loadDashboard() {
-  refreshButton.disabled = true;
-  statusText.textContent = "Refreshing MLB pricing data...";
-
   try {
     const response = await fetch("/api/market-data");
     const payload = await response.json();
@@ -255,11 +255,7 @@ async function loadDashboard() {
     renderDashboard(payload);
   } catch (error) {
     renderError(error.message);
-    statusText.textContent = "Refresh failed.";
-  } finally {
-    refreshButton.disabled = false;
   }
 }
 
-refreshButton.addEventListener("click", loadDashboard);
 loadDashboard();
