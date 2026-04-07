@@ -218,6 +218,15 @@ button {
   margin-top: 2px;
 }
 
+.split-note {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .split-meta {
   display: grid;
   gap: 2px;

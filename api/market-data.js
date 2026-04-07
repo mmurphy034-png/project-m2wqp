@@ -313,7 +313,7 @@ function normalizeSplitCode(rawSplit) {
   return null;
 }
 
-function extractSplitWobaMap(payload) {
+function extractSplitMetricMap(payload) {
   const statsArrays = [
     ...(payload?.stats || []),
     ...(payload?.people?.[0]?.stats || [])
@@ -332,9 +332,14 @@ function extractSplitWobaMap(payload) {
       statNumber(stat.woba) ??
       statNumber(stat.wOBA) ??
       statNumber(stat.weightedOnBaseAverage);
+    const obp = statNumber(stat.obp) ?? statNumber(stat.onBasePercentage);
+    const metric = woba ?? obp;
 
-    if (woba !== null) {
-      byHand[code] = woba;
+    if (metric !== null) {
+      byHand[code] = {
+        value: metric,
+        type: woba !== null ? "wOBA" : "OBP"
+      };
     }
   }
 
@@ -554,7 +559,7 @@ async function fetchPitcherProfile(personId, season) {
     strikeouts: Number(stat.strikeOuts || 0) || null,
     inningsPitched: inningsStringToNumber(stat.inningsPitched || 0),
     hand: person.pitchHand?.code || null,
-    allowedWobaByBatterHand: extractSplitWobaMap(splitPayload)
+    allowedWobaByBatterHand: extractSplitMetricMap(splitPayload)
   };
 }
 
@@ -762,7 +767,7 @@ async function fetchTeamHittingSplits(teamIds, season) {
     teamIds.map(async (teamId) => {
       try {
         const payload = await fetchJson(buildTeamHittingSplitUrl(teamId, season));
-        return [teamId, extractSplitWobaMap(payload)];
+        return [teamId, extractSplitMetricMap(payload)];
       } catch (error) {
         return [teamId, {}];
       }
@@ -843,7 +848,11 @@ async function buildPayload() {
       medianSpreadPrice: oddsByTeam[game.away.code]?.medianSpreadPrice ?? null,
       hittingWobaVsPitcherHand:
         handSplitKey(game.home.pitcher.hand)
-          ? teamHittingSplits[game.away.id]?.[handSplitKey(game.home.pitcher.hand)] ?? null
+          ? teamHittingSplits[game.away.id]?.[handSplitKey(game.home.pitcher.hand)]?.value ?? null
+          : null,
+      hittingSplitMetricType:
+        handSplitKey(game.home.pitcher.hand)
+          ? teamHittingSplits[game.away.id]?.[handSplitKey(game.home.pitcher.hand)]?.type ?? null
           : null,
       record:
         standingsById[game.away.id]?.wins !== undefined
@@ -863,7 +872,11 @@ async function buildPayload() {
       medianSpreadPrice: oddsByTeam[game.home.code]?.medianSpreadPrice ?? null,
       hittingWobaVsPitcherHand:
         handSplitKey(game.away.pitcher.hand)
-          ? teamHittingSplits[game.home.id]?.[handSplitKey(game.away.pitcher.hand)] ?? null
+          ? teamHittingSplits[game.home.id]?.[handSplitKey(game.away.pitcher.hand)]?.value ?? null
+          : null,
+      hittingSplitMetricType:
+        handSplitKey(game.away.pitcher.hand)
+          ? teamHittingSplits[game.home.id]?.[handSplitKey(game.away.pitcher.hand)]?.type ?? null
           : null,
       record:
         standingsById[game.home.id]?.wins !== undefined

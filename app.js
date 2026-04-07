@@ -107,6 +107,10 @@ function formatMetric(value, digits = 3) {
   return Number(value).toFixed(digits);
 }
 
+function metricLabel(type) {
+  return type || "wOBA";
+}
+
 function formatNumber(value, digits = 2) {
   if (value === null || value === undefined) {
     return "--";
@@ -230,20 +234,28 @@ function renderSplitCard(game) {
         <div>
           <p class="symbol">${game.away.code} bats vs ${awayPitcherHand}</p>
           <strong>${formatMetric(game.away.hittingWobaVsPitcherHand)}</strong>
+          <span class="split-note">${metricLabel(game.away.hittingSplitMetricType)}</span>
         </div>
         <div class="split-meta">
           <span>${game.home.pitcher.name} allowed</span>
-          <span>LHB ${formatMetric(awayPitcherAllowed.vl)} | RHB ${formatMetric(awayPitcherAllowed.vr)}</span>
+          <span>
+            LHB ${formatMetric(awayPitcherAllowed.vl?.value)} | RHB ${formatMetric(awayPitcherAllowed.vr?.value)}
+          </span>
+          <span>${metricLabel(awayPitcherAllowed.vl?.type || awayPitcherAllowed.vr?.type)}</span>
         </div>
       </div>
       <div class="split-row">
         <div>
           <p class="symbol">${game.home.code} bats vs ${homePitcherHand}</p>
           <strong>${formatMetric(game.home.hittingWobaVsPitcherHand)}</strong>
+          <span class="split-note">${metricLabel(game.home.hittingSplitMetricType)}</span>
         </div>
         <div class="split-meta">
           <span>${game.away.pitcher.name} allowed</span>
-          <span>LHB ${formatMetric(homePitcherAllowed.vl)} | RHB ${formatMetric(homePitcherAllowed.vr)}</span>
+          <span>
+            LHB ${formatMetric(homePitcherAllowed.vl?.value)} | RHB ${formatMetric(homePitcherAllowed.vr?.value)}
+          </span>
+          <span>${metricLabel(homePitcherAllowed.vl?.type || homePitcherAllowed.vr?.type)}</span>
         </div>
       </div>
     </article>
