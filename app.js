@@ -1,8 +1,6 @@
 const headline = document.getElementById("headline");
 const snapshotGrid = document.getElementById("snapshotGrid");
 const matchupsGrid = document.getElementById("matchupsGrid");
-const marketHigherGroup = document.getElementById("marketHigherGroup");
-const marketLowerGroup = document.getElementById("marketLowerGroup");
 const scoreboard = document.getElementById("scoreboard");
 
 function teamLogoUrl(code) {
@@ -221,16 +219,6 @@ function renderDashboard(payload) {
     ? (payload.matchups || []).map(renderMatchupCard).join("")
     : `<div class="empty-state">No probable matchups found for today.</div>`;
 
-  setGroup(
-    marketHigherGroup,
-    payload.groups.marketHigher || [],
-    "No teams are materially above their record in current pricing."
-  );
-  setGroup(
-    marketLowerGroup,
-    payload.groups.marketLower || [],
-    "No teams are materially below their record in current pricing."
-  );
   renderScoreboard(payload.matchups || []);
 }
 
@@ -238,8 +226,6 @@ function renderError(message) {
   headline.textContent = "MLB ⚾";
   snapshotGrid.innerHTML = `<div class="empty-state">${message}</div>`;
   matchupsGrid.innerHTML = "";
-  marketHigherGroup.innerHTML = "";
-  marketLowerGroup.innerHTML = "";
   scoreboard.innerHTML = "";
 }
 

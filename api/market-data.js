@@ -242,6 +242,12 @@ function normalizeTeamCode(team) {
   );
 }
 
+function normalizeNameKey(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
 async function fetchOddsByTeam() {
   const events = await fetchJson(buildOddsUrl());
   const byTeam = {};
@@ -562,6 +568,9 @@ async function buildPayload() {
   const standingsByCode = Object.fromEntries(
     standings.map((team) => [team.code, team])
   );
+  const standingsByName = Object.fromEntries(
+    standings.map((team) => [normalizeNameKey(team.team), team])
+  );
 
   const scoreboard = standings
     .map((team) => {
@@ -596,11 +605,17 @@ async function buildPayload() {
     ...game,
     away: {
       ...game.away,
-      winPct: standingsByCode[game.away.code]?.winPct ?? null
+      winPct:
+        standingsByCode[game.away.code]?.winPct ??
+        standingsByName[normalizeNameKey(game.away.team)]?.winPct ??
+        null
     },
     home: {
       ...game.home,
-      winPct: standingsByCode[game.home.code]?.winPct ?? null
+      winPct:
+        standingsByCode[game.home.code]?.winPct ??
+        standingsByName[normalizeNameKey(game.home.team)]?.winPct ??
+        null
     }
   }));
 

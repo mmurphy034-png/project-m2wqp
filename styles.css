@@ -11,9 +11,9 @@
   --negative-soft: rgba(255, 255, 255, 0.04);
   --neutral: #d8d8d8;
   --neutral-soft: rgba(255, 255, 255, 0.06);
-  --actual: #ffffff;
-  --market: #cfcfcf;
-  --gap: #8f8f8f;
+  --actual: #3b82f6;
+  --market: #60a5fa;
+  --gap: #93c5fd;
 }
 
 * {
