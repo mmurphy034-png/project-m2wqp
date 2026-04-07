@@ -200,6 +200,20 @@ button {
   align-items: start;
 }
 
+.score-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.score-line strong {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
 .matchup-team {
   display: grid;
   gap: 3px;

@@ -169,6 +169,11 @@ function formatNumber(value, digits = 2) {
 function renderMatchupCard(game) {
   const leanClass =
     game.lean.includes("Away") ? "positive" : game.lean.includes("Home") ? "positive" : "neutral";
+  const gameState = game.gameStatus || "Scheduled";
+  const scoreLine =
+    gameState === "Scheduled" || gameState === "Pre-Game"
+      ? "0-0"
+      : `${game.away.code} ${game.awayScore} - ${game.homeScore} ${game.home.code}`;
 
   return `
     <article class="matchup-card">
@@ -178,6 +183,10 @@ function renderMatchupCard(game) {
           <p class="eyebrow ${leanClass}">${game.lean}</p>
         </div>
         <div class="pill ${game.lean.includes("away") ? "positive" : game.lean.includes("home") ? "negative" : "neutral"}">${game.gameTime ? new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(game.gameTime)) : "TBD"}</div>
+      </div>
+      <div class="score-line">
+        <strong>${scoreLine}</strong>
+        <span>${gameState}</span>
       </div>
       <div class="matchup-columns">
         <div class="matchup-team">
@@ -233,7 +242,7 @@ function renderScoreboard(items) {
                 <span>${game.matchup}</span>
                 <img class="team-logo small" src="${teamLogoUrl(game.home.code)}" alt="${game.home.code} logo" />
               </strong>
-              <p>${game.away.code} ${game.away.record || "--"} | ${game.home.code} ${game.home.record || "--"}</p>
+              <p>${game.away.code} ${game.away.record || "--"} | ${game.home.code} ${game.home.record || "--"} | ${game.gameStatus || "Scheduled"}</p>
             </div>
             <div>${centeredProbabilityBar(game.away.code, game.away.winPct, "away")}</div>
             <div>${centeredProbabilityBar(game.home.code, game.home.winPct, "home")}</div>

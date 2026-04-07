@@ -180,7 +180,7 @@ function buildScheduleUrl(date) {
   const url = new URL(MLB_SCHEDULE_URL);
   url.searchParams.set("sportId", "1");
   url.searchParams.set("date", date);
-  url.searchParams.set("hydrate", "probablePitcher");
+  url.searchParams.set("hydrate", "probablePitcher,linescore");
   return url.toString();
 }
 
@@ -603,6 +603,9 @@ async function fetchTodayMatchups() {
       gamePk: game.gamePk,
       gameTime: game.gameDate,
       matchup: `${awayCode} @ ${homeCode}`,
+      gameStatus: game.status?.detailedState || game.status?.abstractGameState || "Scheduled",
+      awayScore: Number(game.teams?.away?.score ?? 0),
+      homeScore: Number(game.teams?.home?.score ?? 0),
       away: {
         id: awayTeam?.id,
         team: awayName,
