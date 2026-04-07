@@ -1,5 +1,6 @@
 const headline = document.getElementById("headline");
 const scoreboard = document.getElementById("scoreboard");
+const pitchingGrid = document.getElementById("pitchingGrid");
 
 const ESPN_LOGO_CODE = {
   AZ: "ari",
@@ -86,6 +87,26 @@ function formatSpreadWithPrice(spread, price) {
   return `${spreadText} (${priceText})`;
 }
 
+function handLabel(hand) {
+  if (hand === "L") {
+    return "LHP";
+  }
+
+  if (hand === "R") {
+    return "RHP";
+  }
+
+  return "--";
+}
+
+function formatNumber(value, digits = 2) {
+  if (value === null || value === undefined) {
+    return "--";
+  }
+
+  return Number(value).toFixed(digits);
+}
+
 function matchupWinShares(game) {
   const away = game.away.winPct;
   const home = game.home.winPct;
@@ -130,6 +151,55 @@ function matchupShareBar(game) {
   `;
 }
 
+function renderPitchingCard(game) {
+  const gameState = game.gameStatus || "Scheduled";
+  const scoreText =
+    gameState === "Scheduled" || gameState === "Pre-Game"
+      ? "0-0"
+      : `${game.awayScore}-${game.homeScore}`;
+
+  return `
+    <article class="matchup-card">
+      <div class="matchup-top">
+        <div>
+          <h3>${game.matchup}</h3>
+          <p class="eyebrow">${game.lean}</p>
+        </div>
+        <div class="pill neutral">${scoreText} ${gameState}</div>
+      </div>
+      <div class="matchup-columns">
+        <div class="matchup-team">
+          <div class="team-heading">
+            <img class="team-logo" src="${teamLogoUrl(game.away.code)}" alt="${game.away.code} logo" />
+            <strong>${game.away.code}</strong>
+          </div>
+          <span>${game.away.pitcher.name}</span>
+          <span>${handLabel(game.away.pitcher.hand)} | ERA ${formatNumber(game.away.pitcher.era)} | WHIP ${formatNumber(game.away.pitcher.whip)}</span>
+          <span>Record ${game.away.record || "--"} | Win% ${formatPct(game.away.winPct)}</span>
+          <span>Run line ${formatSpreadWithPrice(game.away.medianSpread, game.away.medianSpreadPrice)}</span>
+          <span>Bullpen ${game.away.bullpen.state} (${formatNumber(game.away.bullpen.innings, 1)} IP yesterday)</span>
+        </div>
+        <div class="matchup-meta">
+          <span>Starter edge: ${game.starterEdge}</span>
+          <span>Bullpen edge: ${game.bullpenEdge}</span>
+          <span>Market lean: ${game.lean}</span>
+        </div>
+        <div class="matchup-team">
+          <div class="team-heading">
+            <img class="team-logo" src="${teamLogoUrl(game.home.code)}" alt="${game.home.code} logo" />
+            <strong>${game.home.code}</strong>
+          </div>
+          <span>${game.home.pitcher.name}</span>
+          <span>${handLabel(game.home.pitcher.hand)} | ERA ${formatNumber(game.home.pitcher.era)} | WHIP ${formatNumber(game.home.pitcher.whip)}</span>
+          <span>Record ${game.home.record || "--"} | Win% ${formatPct(game.home.winPct)}</span>
+          <span>Run line ${formatSpreadWithPrice(game.home.medianSpread, game.home.medianSpreadPrice)}</span>
+          <span>Bullpen ${game.home.bullpen.state} (${formatNumber(game.home.bullpen.innings, 1)} IP yesterday)</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
 function renderScoreboard(items) {
   scoreboard.innerHTML = `
     <div class="matrix-head">
@@ -170,11 +240,15 @@ function renderScoreboard(items) {
 function renderDashboard(payload) {
   headline.textContent = `MLB ${String.fromCodePoint(0x26be)}`;
   renderScoreboard(payload.matchups || []);
+  pitchingGrid.innerHTML = (payload.matchups || []).length
+    ? (payload.matchups || []).map(renderPitchingCard).join("")
+    : `<div class="empty-state">No pitching matchups found for today.</div>`;
 }
 
 function renderError(message) {
   headline.textContent = `MLB ${String.fromCodePoint(0x26be)}`;
   scoreboard.innerHTML = `<div class="empty-state">${message}</div>`;
+  pitchingGrid.innerHTML = "";
 }
 
 async function loadDashboard() {
