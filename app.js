@@ -146,6 +146,50 @@ function centeredProbabilityBar(label, value, side) {
   `;
 }
 
+function matchupWinShares(game) {
+  const away = game.away.winPct;
+  const home = game.home.winPct;
+
+  if (away === null || away === undefined || home === null || home === undefined) {
+    return { away: null, home: null };
+  }
+
+  const total = away + home;
+  if (!total) {
+    return { away: null, home: null };
+  }
+
+  return {
+    away: away / total,
+    home: home / total
+  };
+}
+
+function matchupShareBar(game) {
+  const shares = matchupWinShares(game);
+  const awayWidth =
+    shares.away === null || shares.away === undefined
+      ? 0
+      : Math.max(0, Math.min(50, shares.away * 100));
+  const homeWidth =
+    shares.home === null || shares.home === undefined
+      ? 0
+      : Math.max(0, Math.min(50, shares.home * 100));
+
+  return `
+    <div class="matchup-share">
+      <div class="matchup-share-labels">
+        <span>${game.away.code} ${formatPct(shares.away)}</span>
+        <span>${game.home.code} ${formatPct(shares.home)}</span>
+      </div>
+      <div class="matchup-share-track">
+        <span class="matchup-share-fill away" style="width:${awayWidth}%"></span>
+        <span class="matchup-share-fill home" style="width:${homeWidth}%"></span>
+      </div>
+    </div>
+  `;
+}
+
 function renderSnapshotCard(label, value, helper, variant) {
   return `
     <article class="snapshot-card">
@@ -245,8 +289,7 @@ function renderScoreboard(items) {
   scoreboard.innerHTML = `
     <div class="matrix-head">
       <span>Game</span>
-      <span>Away win%</span>
-      <span>Home win%</span>
+      <span>Win share</span>
       <span>Starter edge</span>
       <span>Bullpen edge</span>
       <span>Lean</span>
@@ -263,8 +306,7 @@ function renderScoreboard(items) {
               </strong>
               <p>${game.away.code} ${game.away.record || "--"} | ${game.home.code} ${game.home.record || "--"} | ${game.gameStatus || "Scheduled"}</p>
             </div>
-            <div>${centeredProbabilityBar(game.away.code, game.away.winPct, "away")}</div>
-            <div>${centeredProbabilityBar(game.home.code, game.home.winPct, "home")}</div>
+            <div>${matchupShareBar(game)}</div>
             <div>${game.starterEdge}</div>
             <div>${game.bullpenEdge}</div>
             <div><span class="relationship ${game.lean.includes("edge") ? "positive" : "neutral"}">${game.lean}</span></div>

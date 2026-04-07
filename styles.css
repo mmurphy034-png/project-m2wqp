@@ -391,7 +391,7 @@ button {
 .matrix-head,
 .matrix-row {
   display: grid;
-  grid-template-columns: 1.65fr 0.95fr 0.95fr 0.72fr 0.7fr 0.95fr;
+  grid-template-columns: 1.8fr 1.45fr 0.72fr 0.7fr 0.95fr;
   gap: 8px;
   align-items: center;
   padding: 8px 10px;
@@ -411,6 +411,62 @@ button {
 
 .matrix-row .probability-block {
   min-width: 78px;
+}
+
+.matchup-share {
+  display: grid;
+  gap: 6px;
+  min-width: 220px;
+}
+
+.matchup-share-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.matchup-share-labels span:last-child {
+  text-align: right;
+}
+
+.matchup-share-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 8px;
+  border-radius: 999px;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.matchup-share-track::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(-50%);
+}
+
+.matchup-share-fill {
+  display: block;
+  height: 100%;
+  background: var(--actual);
+}
+
+.matchup-share-fill.away {
+  justify-self: end;
+  transform-origin: right center;
+}
+
+.matchup-share-fill.home {
+  justify-self: start;
+  transform-origin: left center;
 }
 
 .empty-state {
